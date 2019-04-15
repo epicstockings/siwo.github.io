@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+
+    
+
+    
+        <meta name="description" content="#目的
+最近想了解一下目前市场上python工程师的需求、技能要求以及薪酬待遇。单纯从招聘网站搜索来查询的话效率太低，无用信息太多，不能得到全面完整的信息。因此考虑使用爬虫来进行数据收集，并对获取的数据进行分析展示。这项工作主要分为两个部分，数据爬取以及数据分析解释，这篇文章主要记录数据爬取的实现过">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Siwo">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="爬取猎聘网招聘信息">
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="#目的
+最近想了解一下目前市场上python工程师的需求、技能要求以及薪酬待遇。单纯从招聘网站搜索来查询的话效率太低，无用信息太多，不能得到全面完整的信息。因此考虑使用爬虫来进行数据收集，并对获取的数据进行分析展示。这项工作主要分为两个部分，数据爬取以及数据分析解释，这篇文章主要记录数据爬取的实现过">
+    
+
+    <!--Open Graph Site Name-->
+        <meta property="og:site_name" content="EPICSIWO">
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article">
+    
+
+    <!--Page Cover-->
+    
+    
+        <meta property="og:image" content="https://epicstockings.github.io/siwo.github.iohttp://www.codeblocq.com/assets/projects/hexo-theme-clean-blog/img/home-bg.jpg">
+    
+
+        <meta name="twitter:card" content="summary_large_image">
+
+    
+
+    
+        <meta name="twitter:image" content="https://epicstockings.github.io/siwo.github.iohttp://www.codeblocq.com/assets/projects/hexo-theme-clean-blog/img/home-bg.jpg">
+    
+
+    <!-- Title -->
+    
+    <title>爬取猎聘网招聘信息 - EPICSIWO</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/siwo.github.io/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    
+
+
+    <!-- favicon -->
+    
+
+</head>
+
+
+<body>
+
+    <!-- Menu -->
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/siwo.github.io/">Configurable Title</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/siwo.github.io/">
+                            
+                                Home
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/siwo.github.io/archives">
+                            
+                                Archives
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/siwo.github.io/tags">
+                            
+                                Tags
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/siwo.github.io/categories">
+                            
+                                Categories
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="https://github.com/epicstockings">
+                            
+                                <i class="fa fa-github fa-stack-2x"></i>
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('http://www.codeblocq.com/assets/projects/hexo-theme-clean-blog/img/home-bg.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>爬取猎聘网招聘信息</h1>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                        
+                            2019-04-15
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <p>#目的</p>
+<p>最近想了解一下目前市场上python工程师的需求、技能要求以及薪酬待遇。单纯从招聘网站搜索来查询的话效率太低，无用信息太多，不能得到全面完整的信息。因此考虑使用爬虫来进行数据收集，并对获取的数据进行分析展示。<br>这项工作主要分为两个部分，数据爬取以及数据分析解释，这篇文章主要记录数据爬取的实现过程和遇到的问题，数据分析的工作将在之后的文章中展示。</p>
+<p>#主要流程<br>一、分析搜索页面url组成；<br>二、解析搜索页面，提取招聘信息页面url；<br>三、解析招聘信息页面，提取关键信息存储；</p>
+<p>#一、分析搜索页面url组成<br>首先进入猎聘网官网，选择搜索框下面的“Python“进入搜索页面。</p>
+<p>搜索页面的url为<br><code>https://www.liepin.com/city-sh/zhaopin/?searchField=1&amp;dqs=020&amp;key=Python&amp;sfrom=click-pc_homepage-centre_keywordjobs-search_new</code><br><code>city-sh</code>为搜索岗位城市，<code>key=Python</code>为搜索关键字信息，其他信息暂时无法确定具体含义。这只是第一个搜索页面url，我们需要的是找到搜索页面的页码信息，因此查看页面底部页面选择部分。</p>
+<p>第二页的url为<br><code>https://www.liepin.com/city-sh/zhaopin/pn1/?key=Python&amp;d_sfrom=search_city&amp;d_ckId=dc3bec70ce83af575894ec467b472d90&amp;d_curPage=0&amp;d_pageSize=40&amp;d_headId=dc3bec70ce83af575894ec467b472d90</code><br>这里出现了关键的页面信息<code>pn1</code>，到这里我们需要的关键信息（页码、搜索关键字、地区）都齐全了，尝试只选取这些信息组成url看看能不能获取完整的html。<br>根据现有信息组成了url <code>https://www.liepin.com/city-sh/zhaopin/pn1/?key=Python</code>，bingo，得到了正确的html。尝试修改pn后的页码，发现不同数字可以对应不同页码，从0到99共一百个页面。修改city后对应的城市，这里选择<code>bj</code>，也能获得北京相关招聘信息。修改key关键字，能够得到对应搜索内容。<br>至此，搜索页面url的规律已经找到，可以根据这些来组成特点城市、特点关键字的所有搜索页面的url。<br>这篇内容主要搜索Python相关招聘信息作为尝试，之后可能会统计数据分析、数据挖掘等信息。</p>
+<p>#二、解析搜索页面，提取招聘信息页面url<br>对搜索页面的网页源代码进行解析，在源代码中搜索招聘内容，可以找到对应的代码。<br>代码后面<code>&lt;a href=&quot;https://www.liepin.com/job/1917438187.shtml&quot;&gt;.*&lt;/a&gt;</code>的内容就是招聘信息页的具体url地址。这里可以看到url在<a></a>的href中，格式统一，都是以<code>https://www.liepin.com/job/数字.shtml</code>组成，而且这些信息都直接存于源代码中，不需要使用浏览器模拟来获取。<br>在源代码中搜索<code>https://www.liepin.com/job</code> 可以获得41个信息，其中一个不包含后面的shtml，因此只有40个具体地址。这里使用beautifulsoup库来进行url提取，搜索所有<code>&lt;a&gt;</code>的内容，正则匹配其中href的部分。具体内容见后续代码get_url_info()部分。</p>
+<p>以下为完整的单个招聘页面url获取的代码。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">from bs4 import BeautifulSoup</span><br><span class="line">import re,time,json</span><br><span class="line">import random</span><br><span class="line">from selenium.webdriver.chrome.options import Options</span><br><span class="line">from selenium import webdriver</span><br><span class="line">#获取搜索页面url</span><br><span class="line">hds=[&#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Windows NT 6.2) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.12 Safari/535.11&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:34.0) Gecko/20100101 Firefox/34.0&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/44.0.2403.89 Chrome/44.0.2403.89 Safari/537.36&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Windows; U; Windows NT 6.1; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_0) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; en) Presto/2.8.131 Version/11.11&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11&apos;&#125;]</span><br><span class="line">#拼接搜索页面url</span><br><span class="line">def get_url_search(pageNumber, city,keyword):</span><br><span class="line">    urls = []</span><br><span class="line">    for pn in range(pageNumber):</span><br><span class="line">        url = &apos;https://www.liepin.com/city-%s/zhaopin/pn%s/?key=%s&apos;%(city,pn,keyword)</span><br><span class="line">        urls.append(url)</span><br><span class="line">    return urls</span><br><span class="line"></span><br><span class="line">#从搜索页面获取具体招聘页面url</span><br><span class="line">def get_url_info(url_search):</span><br><span class="line">    html = requests.get(url_search,headers=hds[random.randint(0,len(hds)-1)]).text</span><br><span class="line">    soup = BeautifulSoup(html,&apos;lxml&apos;)</span><br><span class="line">    hrefs = soup.find_all(&apos;a&apos;)</span><br><span class="line">    hrefs_useful = []</span><br><span class="line">    pattern = re.compile(r&apos;https://www.liepin.com/job/.*.shtml&apos;)</span><br><span class="line">    for link in hrefs:</span><br><span class="line">        try:</span><br><span class="line">            match = pattern.match(link.get(&apos;href&apos;))</span><br><span class="line">            if match:</span><br><span class="line">                print(link.get(&apos;href&apos;))</span><br><span class="line">                hrefs_useful.append(link.get(&apos;href&apos;))</span><br><span class="line">        except:</span><br><span class="line">            1</span><br><span class="line">    return hrefs_useful</span><br><span class="line"></span><br><span class="line">#对每个城市的所有搜索页面提取具体招聘页面的url，并去重</span><br><span class="line">def get_city_url_info(city,url_list):</span><br><span class="line">    hrefs_useful = []</span><br><span class="line">    hrefs_useful_len = 0</span><br><span class="line">    repeat_n = 0</span><br><span class="line">    for url_search in url_list:</span><br><span class="line">        hrefs_useful.extend(get_url_info(url_search))</span><br><span class="line">        time.sleep(0.5)</span><br><span class="line">        hrefs_useful_set = list(set(hrefs_useful))</span><br><span class="line">        #判断是否多个页面没有获得新数据</span><br><span class="line">        if hrefs_useful_len == len(hrefs_useful_set):</span><br><span class="line">            repeat_n += 1</span><br><span class="line">        else:</span><br><span class="line">            repeat_n =0</span><br><span class="line">        #连续n次没有新数据则返回</span><br><span class="line">        if repeat_n &gt; 10:</span><br><span class="line">            print(&apos;---%s--以超过%s个页面没有更新，退出&apos;%(city,repeat_n))</span><br><span class="line">            break</span><br><span class="line">        hrefs_useful_len = len(hrefs_useful_set)</span><br><span class="line">        print(&apos;---%s----已经完成，有---%s---页面&apos;%(city,len(hrefs_useful_set)))</span><br><span class="line">    return hrefs_useful_set</span><br><span class="line">        </span><br><span class="line">    </span><br><span class="line">cities = [&apos;sh&apos;,&apos;bj&apos;,&apos;sz&apos;,&apos;gz&apos;,&apos;xiamen&apos;,&apos;hz&apos;,&apos;zhengzhou&apos;,&apos;nj&apos;,&apos;cq&apos;,&apos;tj&apos;,&apos;cd&apos;,</span><br><span class="line">          &apos;suzhou&apos;,&apos;dl&apos;,&apos;jinan&apos;,&apos;ningbo&apos;,&apos;wuxi&apos;,&apos;qingdao&apos;,&apos;shenyang&apos;,</span><br><span class="line">          &apos;xian&apos;,&apos;wuhan&apos;]    #&apos;sh&apos;,</span><br><span class="line">key = &apos;python&apos;</span><br><span class="line">url_list = &#123;&#125;</span><br><span class="line">url_list_city_info = &#123;&#125;</span><br><span class="line">for city in cities:</span><br><span class="line">    url_list[city] = get_url_search(99, city,key)</span><br><span class="line">    url_list_city_info[city] = get_city_url_info(city,url_list[city])</span><br><span class="line">    print(&apos;%s--爬取完成，获得--%s--个页面&apos;%(city , len(url_list_city_info[city])))</span><br><span class="line"></span><br><span class="line">path_out = r&apos;C:\siwo\自娱自乐\爬虫\liepin_info_url.json&apos;</span><br><span class="line">with open(path_out,&apos;w&apos;)as f:</span><br><span class="line">    json.dump(url_list_city_info,f)</span><br><span class="line">    print(&apos;写入文件完成-----&apos;)</span><br></pre></td></tr></table></figure></p>
+<p>这里有两个需要注意的地方：</p>
+<ol>
+<li>城市信息<code>cities</code>是从<code>https://www.liepin.com/citylist/</code>的常用城市中获取的。<br>这里，台州(<code>city-taizhou</code>)的信息有误，第一页5个岗位往后就直接是浙江省的招聘信息了，因此把台州去除。</li>
+<li>在对每个搜索页面结果去重后发现，网站会有很多重复的页面，100页中并不全都是唯一的，当搜索到一定页码后就不会有新的招聘信息了。为了减少无用搜索时间，这里加了个判断，当连续10个页面没有出现新的招聘信息后退出。</li>
+</ol>
+<p>最后，将获取到的所有招聘页面url存到对应的文件中，为下一步页面详细信息提取做准备。
+ </p>
+<p>#三、解析招聘信息页面，提取关键信息存储</p>
+<p>具体的招聘信息页面如下图所示，为了后续数据分析能有更多的信息可以进行分析，这里把能获得的所有内容都进行了提取。<br>主要包括：</p>
+<blockquote>
+<p>url, #页面url<br>key_word, #关键字<br>city, #城市<br>job_name, #招聘岗位简要内容<br>company, #公司<br>salary, #薪酬待遇<br>position, #岗位所在位置<br>time_pub, #发布时间<br>job_qualifications, #岗位简要要求<br>com_tag_list, #岗位优势<br>content_word, #岗位详细描述<br>info_word, #公司详细描述<br>url_com, #公司url<br>field, #公司所在行业<br>com_size, #公司规模<br>location, #公司地址</p>
+</blockquote>
+<p>每个信息的具体提取方法我这里不赘述了，基本逻辑都是从源代码中找到对应的信息，然后通过<code>soup</code>进行搜索匹配找到需要的内容。<br>这部分内容有些会有缺失，或者招聘结束，这些都会导致程序报错退出，加入错误判断，缺省值填充<code>“nan“</code>。</p>
+<p>具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">from bs4 import BeautifulSoup</span><br><span class="line">import re,time</span><br><span class="line">import json</span><br><span class="line">import random</span><br><span class="line"></span><br><span class="line">hds=[&#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Windows NT 6.2) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.12 Safari/535.11&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:34.0) Gecko/20100101 Firefox/34.0&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/44.0.2403.89 Chrome/44.0.2403.89 Safari/537.36&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Windows; U; Windows NT 6.1; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_0) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; en) Presto/2.8.131 Version/11.11&apos;&#125;,\</span><br><span class="line">    &#123;&apos;User-Agent&apos;:&apos;Opera/9.80 (Windows NT 6.1; U; en) Presto/2.8.131 Version/11.11&apos;&#125;]</span><br><span class="line"></span><br><span class="line">def get_url_info(url,key_word,city):</span><br><span class="line">    html = requests.get(url,headers=hds[random.randint(0,len(hds)-1)]).text</span><br><span class="line">    soup = BeautifulSoup(html,&apos;lxml&apos;)</span><br><span class="line">    </span><br><span class="line">    ## In[] 从html中提取关键信息</span><br><span class="line">    #招聘岗位简要内容</span><br><span class="line">    job_name = soup.h1.text</span><br><span class="line">    try:</span><br><span class="line">    #公司</span><br><span class="line">        company = soup.h3.find_all(href=re.compile(&quot;https://www.liepin.com/company/&quot;))[0].text</span><br><span class="line">    except:</span><br><span class="line">        return [&apos;该职位已结束&apos;]</span><br><span class="line">    #薪酬待遇</span><br><span class="line">    salary = soup.find_all(&quot;p&quot;, &quot;job-item-title&quot;)[0].text.split(&apos;\r&apos;)[0]</span><br><span class="line">    try:</span><br><span class="line">    #岗位所在位置</span><br><span class="line">        position = soup.find_all(&quot;p&quot;, &quot;basic-infor&quot;)[0].a.text</span><br><span class="line">    except:</span><br><span class="line">        position = &apos;nan&apos;</span><br><span class="line">    #发布时间</span><br><span class="line">    time_pub = soup.find_all(&quot;p&quot;, &quot;basic-infor&quot;)[0].time[&apos;title&apos;]</span><br><span class="line">    #岗位简要要求</span><br><span class="line">    job_qualifications = &apos;\t&apos;.join(list(filter(None, soup.find_all(&quot;div&quot;, &quot;job-qualifications&quot;)[0].text.split(&apos;\n&apos;))))</span><br><span class="line">    try:</span><br><span class="line">    #岗位优势</span><br><span class="line">        com_tag_list = &apos;\t&apos;.join(list(filter(None, soup.find_all(&quot;ul&quot;, &quot;comp-tag-list clearfix&quot;)[0].text.split(&apos;\n&apos;))))</span><br><span class="line">    except:</span><br><span class="line">        com_tag_list = &apos;nan&apos;</span><br><span class="line">    #岗位详细描述</span><br><span class="line">    content_word = soup.find_all(&quot;div&quot;, &quot;content content-word&quot;)[0].text</span><br><span class="line">    try:</span><br><span class="line">    #公司详细描述</span><br><span class="line">        info_word = soup.find_all(&quot;div&quot;, &quot;info-word&quot;)[0].text</span><br><span class="line">    except:</span><br><span class="line">        info_word = &apos;nan&apos;</span><br><span class="line">    #公司url</span><br><span class="line">    url_com = soup.h3.find_all(href=re.compile(&quot;https://www.liepin.com/company/&quot;))[0][&apos;href&apos;]</span><br><span class="line">    #公司所在行业、公司规模、公司地址</span><br><span class="line">    pattern_field = re.compile(r&apos;行业&apos;)</span><br><span class="line">    pattern_com_size = re.compile(r&apos;公司规模&apos;)</span><br><span class="line">    pattern_location = re.compile(r&apos;公司地址&apos;)</span><br><span class="line">    field = &apos;nan&apos;</span><br><span class="line">    com_size = &apos;nan&apos;</span><br><span class="line">    location = &apos;nan&apos;</span><br><span class="line">    for li in soup.find_all(&quot;ul&quot;, &quot;new-compintro&quot;)[0].find_all(&apos;li&apos;):</span><br><span class="line">        if pattern_field.match(li.text):</span><br><span class="line">            try:</span><br><span class="line">                field = li.a.text</span><br><span class="line">            except:</span><br><span class="line">                field = li.text.split(&apos;：&apos;)[-1]</span><br><span class="line">        elif pattern_com_size.match(li.text):</span><br><span class="line">            com_size = li.text.split(&apos;：&apos;)[-1]</span><br><span class="line">        elif pattern_location.match(li.text):</span><br><span class="line">            location = li.text.split(&apos;：&apos;)[-1]</span><br><span class="line">    return [url,key_word,city,job_name,company,</span><br><span class="line">            salary,position,time_pub,job_qualifications,com_tag_list,</span><br><span class="line">            content_word,info_word,url_com,field,com_size,location]#</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">#提取每个详细招聘页面url list信息</span><br><span class="line">path_in = r&apos;C:\siwo\自娱自乐\爬虫\liepin_info_url.json&apos;</span><br><span class="line">with open(path_in,&apos;r&apos;)as f:</span><br><span class="line">    url_list_city_info = json.load(f)</span><br><span class="line">    print(&apos;读取文件完成-----&apos;)</span><br><span class="line"></span><br><span class="line">cities = [&apos;sh&apos;,&apos;bj&apos;,&apos;sz&apos;,&apos;gz&apos;,&apos;xiamen&apos;,&apos;hz&apos;,&apos;zhengzhou&apos;,&apos;nj&apos;,&apos;cq&apos;,&apos;tj&apos;,&apos;cd&apos;,</span><br><span class="line">          &apos;suzhou&apos;,&apos;dl&apos;,&apos;jinan&apos;,&apos;ningbo&apos;,&apos;wuxi&apos;,&apos;qingdao&apos;,&apos;shenyang&apos;,#&apos;taizhou&apos;,</span><br><span class="line">          &apos;xian&apos;,&apos;wuhan&apos;]</span><br><span class="line"></span><br><span class="line">url_list_city = list(url_list_city_info.keys())</span><br><span class="line">key_word = &apos;python&apos;</span><br><span class="line">#city = &apos;bj&apos;</span><br><span class="line">for city in cities:</span><br><span class="line">    time0 = time.time()</span><br><span class="line">    out_list = []</span><br><span class="line">    count = 0</span><br><span class="line">    for url in url_list_city_info[city]:</span><br><span class="line">        out_list.append(get_url_info(url,key_word,city))</span><br><span class="line">        print(&apos;%s--%s--爬取完成&apos;%(count,url))</span><br><span class="line">        count += 1</span><br><span class="line">    print(&apos;---%s---%s---信息完成&apos;%(city,len(url_list_city_info[city])))</span><br><span class="line">    print(&apos;用时--%dmin&apos;%((time.time()-time0)/60))</span><br><span class="line">    </span><br><span class="line">    #存储</span><br><span class="line">    pathout = &apos;C:/siwo/自娱自乐/爬虫/liepin_job_info_%s.txt&apos;%(city)</span><br><span class="line">    with open(pathout , &apos;w&apos;,encoding=&apos;utf-8&apos;)as f:</span><br><span class="line">        for i in out_list:</span><br><span class="line">            f.write(&apos;\t\t\t&apos;.join(i) + &apos;\t\t\n\n&apos;)</span><br></pre></td></tr></table></figure></p>
+<p>数据存储结果：</p>
+<p>至此，数据爬取的工作基本完成，也得到了需要的数据了。其实爬取的工作都是很简单，网页可以看到的内容基本都可以通过爬虫爬取，只是效率的问题，真正困难的还是数据分析理解，找寻关键信息。接下来大部分时间都会花在数据解析和可视化中，尽可能得出一个清晰的报告。</p>
+
+
+                
+            </div>
+
+            <!-- Comments -->
+            
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    
+
+
+                </div>
+            
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+
+                    
+
+                    
+                        <li>
+                            <a href="https://github.com/epicstockings" target="_blank">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+
+                    
+
+                    
+
+                    
+                </ul>
+                <p class="copyright text-muted">&copy; 2019 Siwo<br></p>
+                <p class="copyright text-muted">Original Theme <a target="_blank" href="http://startbootstrap.com/template-overviews/clean-blog/">Clean Blog</a> from <a href="http://startbootstrap.com/" target="_blank">Start Bootstrap</a></p>
+                <p class="copyright text-muted">Adapted for <a target="_blank" href="https://hexo.io/">Hexo</a> by <a href="http://www.codeblocq.com/" target="_blank">Jonathan Klughertz</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Bootstrap -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>
